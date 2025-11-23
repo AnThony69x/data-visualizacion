@@ -53,12 +53,23 @@ class SpotifyVisualizerApp:
     def print_header(self):
         """Imprime el encabezado principal con diseño mejorado"""
         self.clear_screen()
-        print(f"\n{Back.GREEN}{Fore.BLACK}{'═'*70}{Style.RESET_ALL}")
-        print(f"{Back.GREEN}{Fore.BLACK}{'  🎵  SISTEMA DE VISUALIZACIÓN DE DATOS SPOTIFY  🎵  ':^70}{Style.RESET_ALL}")
+        
+        # Banner ASCII
+        print(f"{Fore.GREEN}")
+        print("""
+    ███████╗██████╗  ██████╗ ████████╗██╗███████╗██╗   ██╗
+    ██╔════╝██╔══██╗██╔═══██╗╚══██╔══╝██║██╔════╝╚██╗ ██╔╝
+    ███████╗██████╔╝██║   ██║   ██║   ██║█████╗   ╚████╔╝ 
+    ╚════██║██╔═══╝ ██║   ██║   ██║   ██║██╔══╝    ╚██╔╝  
+    ███████║██║     ╚██████╔╝   ██║   ██║██║        ██║   
+    ╚══════╝╚═╝      ╚═════╝    ╚═╝   ╚═╝╚═╝        ╚═╝   
+    """)
+        print(f"{Style.RESET_ALL}")
         print(f"{Back.GREEN}{Fore.BLACK}{'═'*70}{Style.RESET_ALL}")
-        print(f"{Fore.CYAN}{'  📊 Análisis Avanzado de Datos Musicales  ':^70}{Style.RESET_ALL}")
+        print(f"{Back.GREEN}{Fore.BLACK}{'  📊 DATA VISUALIZER - ANÁLISIS AVANZADO  ':^70}{Style.RESET_ALL}")
+        print(f"{Back.GREEN}{Fore.BLACK}{'═'*70}{Style.RESET_ALL}")
         print(f"{Fore.CYAN}{'  Universidad ULEAM - 2025  ':^70}{Style.RESET_ALL}")
-        print(f"{Fore.YELLOW}{'  Autores: Anthony (@AnThony69x) & Emilio (@EmilioSle)  ':^70}{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}{'  Anthony (@AnThony69x) & Emilio (@EmilioSle)  ':^70}{Style.RESET_ALL}")
         print(f"{Back.GREEN}{Fore.BLACK}{'═'*70}{Style.RESET_ALL}\n")
     
     def initialize(self):
