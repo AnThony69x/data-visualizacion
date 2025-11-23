@@ -1,0 +1,183 @@
+# ========================================
+# 🎵 SPOTIFY DATA VISUALIZER - .gitignore
+# ========================================
+# Autores: Anthony (@AnThony69x), Emilio (@EmilioSle)
+# Universidad: ULEAM - Visualización de Datos
+# ========================================
+
+# ============ PYTHON ============
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribución / empaquetado
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# ============ JUPYTER ============
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IPython
+profile_default/
+ipython_config.py
+
+# ============ IDEs ============
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Spyder
+.spyderproject
+.spyproject
+
+# ============ SISTEMA OPERATIVO ============
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+
+# ============ DATOS ============
+
+# Archivos de datos crudos (NO subir datasets grandes)
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*.json
+
+# Archivos procesados (se pueden regenerar)
+data/processed/*.csv
+
+# EXCEPCIÓN: Mantener archivo de ejemplo pequeño (opcional)
+# !data/raw/sample_data.csv
+
+# ============ OUTPUT ============
+
+# Imágenes generadas (se pueden regenerar)
+output/images/*.png
+output/images/*.jpg
+output/images/*.jpeg
+output/images/*.svg
+
+# Archivos HTML interactivos
+output/interactive/*.html
+
+# Mantener las carpetas pero vacías
+!output/images/.gitkeep
+!output/interactive/.gitkeep
+
+# ============ LOGS Y TEMPORAL ============
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Archivos temporales
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Cache
+.cache/
+*.cache
+
+# ============ TESTING ============
+
+# pytest
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+.hypothesis/
+
+# ============ OTROS ============
+
+# Archivos de configuración local
+.env
+.env.local
+*.secret
+config.local.py
+
+# Backups
+*.bak
+*.backup
+
+# Archivos comprimidos
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Documentación generada
+docs/_build/
+site/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
