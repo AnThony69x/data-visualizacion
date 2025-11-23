@@ -540,8 +540,11 @@ Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detall
 
 **Anthony**
 - 👤 GitHub: [@AnThony69x](https://github.com/AnThony69x)
-- **Emilio**
+
+**Emilio**
 - 👤 GitHub: [@EmilioSle](https://github.com/EmilioSle)
+
+**Información del Proyecto:**
 - 🎓 Universidad: ULEAM (Universidad Laíca de Eloy Alfaro de Manabí)
 - 📚 Curso: Visualización de Datos
 - 📅 Fecha: Noviembre 23, 2025
