@@ -152,6 +152,7 @@ class SpotifyVisualizerApp:
         print(f"\n{Back.YELLOW}{Fore.BLACK}  ✨ OPCIONES ESPECIALES  {Style.RESET_ALL}")
         print(f"{Fore.GREEN}  11. 🎨 Generar TODOS los gráficos{Style.RESET_ALL}")
         print(f"{Fore.GREEN}  12. 📊 Ver resumen de datos{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}  13. 🔍 Buscar canciones{Style.RESET_ALL}")
         print(f"{Fore.RED}   0. 🚪 Salir del sistema{Style.RESET_ALL}")
         
         print(f"\n{Fore.YELLOW}{'═'*70}{Style.RESET_ALL}")
@@ -173,6 +174,7 @@ class SpotifyVisualizerApp:
             '10': lambda: sankey_diagram(self.data),
             '11': self.generate_all,
             '12': self._show_data_summary,
+            '13': self.search_songs_menu,
             '0': self.exit_app
         }
         
@@ -186,7 +188,7 @@ class SpotifyVisualizerApp:
                 
                 action()
                 
-                if choice not in ['0', '11', '12']:
+                if choice not in ['0', '11', '12', '13']:
                     logger.success(MESSAGES['success'])
                     input(f"\n{Fore.CYAN}📌 Presiona Enter para volver al menú...{Style.RESET_ALL}")
                     
@@ -288,6 +290,59 @@ class SpotifyVisualizerApp:
             print(f"{Fore.YELLOW}  {medal} {i}. {Fore.WHITE}{row['artist_name']}: {Fore.GREEN}{row['artist_popularity']:.0f}{Style.RESET_ALL}")
         
         print(f"\n{Fore.YELLOW}{'─'*70}{Style.RESET_ALL}")
+        input(f"\n{Fore.CYAN}📌 Presiona Enter para volver al menú...{Style.RESET_ALL}")
+    
+    def search_songs_menu(self):
+        """Menú de búsqueda de canciones"""
+        self.print_header()
+        
+        print(f"{Back.CYAN}{Fore.BLACK}{'  🔍 BÚSQUEDA DE CANCIONES  ':^70}{Style.RESET_ALL}\n")
+        print(f"{Fore.YELLOW}Busca canciones por nombre (ej: love, happy, night){Style.RESET_ALL}\n")
+        
+        query = input(f"{Fore.GREEN}👉 Buscar canción: {Style.RESET_ALL}").strip()
+        
+        if not query:
+            logger.warning("⚠️  Búsqueda vacía")
+            input(f"\n{Fore.CYAN}📌 Presiona Enter para continuar...{Style.RESET_ALL}")
+            return
+        
+        logger.info(f"Buscando '{query}'...")
+        
+        from src.utils.helpers import search_songs
+        results = search_songs(self.data, query)
+        
+        if len(results) == 0:
+            print(f"\n{Fore.RED}❌ No se encontraron resultados para '{query}'{Style.RESET_ALL}")
+        else:
+            print(f"\n{Fore.GREEN}✅ Se encontraron {len(results)} resultados:{Style.RESET_ALL}\n")
+            print(f"{Fore.YELLOW}{'─'*70}{Style.RESET_ALL}")
+            
+            # Mostrar top 10 resultados
+            for i, (_, row) in enumerate(results.head(10).iterrows(), 1):
+                print(f"{Fore.CYAN}{i:2d}. {Fore.WHITE}{row['track_name'][:50]}")
+                print(f"    {Fore.GREEN}🎤 Artista: {row['artist_name']}")
+                print(f"    {Fore.MAGENTA}💿 Álbum: {row['album_name'][:40]}")
+                
+                # Popularidad con barra visual
+                pop = int(row['track_popularity'])
+                bar = '█' * (pop // 5)
+                print(f"    {Fore.YELLOW}⭐ Popularidad: {pop:3d}/100 [{bar}]", end='')
+                
+                # Duración
+                duration = row['track_duration_min']
+                print(f" | {Fore.CYAN}⏱️  {duration:.2f} min", end='')
+                
+                # Explícito
+                if row['explicit']:
+                    print(f" | {Fore.RED}🔞 Explícito", end='')
+                
+                print()  # Nueva línea
+                print(f"{Fore.YELLOW}{'─'*70}{Style.RESET_ALL}")
+            
+            if len(results) > 10:
+                print(f"\n{Fore.YELLOW}💡 Mostrando 10 de {len(results)} resultados{Style.RESET_ALL}")
+                print(f"{Fore.YELLOW}   Refina tu búsqueda para resultados más específicos{Style.RESET_ALL}")
+        
         input(f"\n{Fore.CYAN}📌 Presiona Enter para volver al menú...{Style.RESET_ALL}")
     
     def exit_app(self):

@@ -115,3 +115,47 @@ def safe_divide(numerator, denominator, default=0):
     if denominator == 0:
         return default
     return numerator / denominator
+
+
+def search_songs(data, query):
+    """
+    Busca canciones por nombre
+    
+    Args:
+        data: DataFrame con datos de Spotify
+        query: Texto a buscar en el nombre de la canción
+    
+    Returns:
+        DataFrame con resultados ordenados por popularidad
+    
+    Ejemplo:
+        >>> results = search_songs(data, "love")
+        >>> print(results.head())
+    """
+    import pandas as pd
+    
+    if not query or query.strip() == "":
+        return pd.DataFrame()
+    
+    # Buscar en track_name (case insensitive)
+    results = data[
+        data['track_name'].str.contains(query, case=False, na=False)
+    ]
+    
+    # Seleccionar columnas relevantes
+    results = results[[
+        'track_name', 
+        'artist_name', 
+        'track_popularity', 
+        'album_name', 
+        'track_duration_min',
+        'explicit'
+    ]].copy()
+    
+    # Ordenar por popularidad descendente
+    results = results.sort_values('track_popularity', ascending=False)
+    
+    # Eliminar duplicados
+    results = results.drop_duplicates(subset=['track_name', 'artist_name'])
+    
+    return results

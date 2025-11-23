@@ -9,7 +9,8 @@ from .helpers import (
     get_top_n,
     filter_outliers,
     create_category_bins,
-    safe_divide
+    safe_divide,
+    search_songs
 )
 from .text_utils import truncate_text, wrap_text, clean_label
 
@@ -23,5 +24,6 @@ __all__ = [
     'safe_divide',
     'truncate_text',
     'wrap_text',
-    'clean_label'
+    'clean_label',
+    'search_songs'
 ]
