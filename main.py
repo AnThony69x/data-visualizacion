@@ -153,6 +153,7 @@ class SpotifyVisualizerApp:
         print(f"{Fore.GREEN}  11. 🎨 Generar TODOS los gráficos{Style.RESET_ALL}")
         print(f"{Fore.GREEN}  12. 📊 Ver resumen de datos{Style.RESET_ALL}")
         print(f"{Fore.GREEN}  13. 🔍 Buscar canciones{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}  14. 🎤 Comparar artistas{Style.RESET_ALL}")
         print(f"{Fore.RED}   0. 🚪 Salir del sistema{Style.RESET_ALL}")
         
         print(f"\n{Fore.YELLOW}{'═'*70}{Style.RESET_ALL}")
@@ -175,6 +176,7 @@ class SpotifyVisualizerApp:
             '11': self.generate_all,
             '12': self._show_data_summary,
             '13': self.search_songs_menu,
+            '14': self.compare_artists_menu,
             '0': self.exit_app
         }
         
@@ -188,7 +190,7 @@ class SpotifyVisualizerApp:
                 
                 action()
                 
-                if choice not in ['0', '11', '12', '13']:
+                if choice not in ['0', '11', '12', '13', '14']:
                     logger.success(MESSAGES['success'])
                     input(f"\n{Fore.CYAN}📌 Presiona Enter para volver al menú...{Style.RESET_ALL}")
                     
@@ -342,6 +344,116 @@ class SpotifyVisualizerApp:
             if len(results) > 10:
                 print(f"\n{Fore.YELLOW}💡 Mostrando 10 de {len(results)} resultados{Style.RESET_ALL}")
                 print(f"{Fore.YELLOW}   Refina tu búsqueda para resultados más específicos{Style.RESET_ALL}")
+        
+        input(f"\n{Fore.CYAN}📌 Presiona Enter para volver al menú...{Style.RESET_ALL}")
+    
+    def compare_artists_menu(self):
+        """Menú de comparación de artistas"""
+        self.print_header()
+        
+        print(f"{Back.MAGENTA}{Fore.WHITE}{'  🎤 COMPARADOR DE ARTISTAS  ':^70}{Style.RESET_ALL}\n")
+        print(f"{Fore.YELLOW}Compara dos artistas en múltiples métricas{Style.RESET_ALL}\n")
+        
+        # Mostrar sugerencias de artistas populares
+        top_artists = (self.data
+                      .groupby('artist_name')['artist_popularity']
+                      .first()
+                      .nlargest(10)
+                      .index.tolist())
+        
+        print(f"{Fore.CYAN}💡 Artistas disponibles (top 10):{Style.RESET_ALL}")
+        for i, artist in enumerate(top_artists, 1):
+            print(f"   {Fore.GREEN}{i:2d}. {artist}{Style.RESET_ALL}")
+        print()
+        print(f"{Fore.YELLOW}💡 Puedes escribir el número o el nombre completo del artista{Style.RESET_ALL}\n")
+        
+        # Solicitar artistas
+        artist1_input = input(f"{Fore.GREEN}👉 Primer artista (número o nombre): {Style.RESET_ALL}").strip()
+        artist2_input = input(f"{Fore.GREEN}👉 Segundo artista (número o nombre): {Style.RESET_ALL}").strip()
+        
+        if not artist1_input or not artist2_input:
+            logger.warning("⚠️  Debes ingresar ambos artistas")
+            input(f"\n{Fore.CYAN}📌 Presiona Enter para continuar...{Style.RESET_ALL}")
+            return
+        
+        # Convertir números a nombres si es necesario
+        try:
+            num1 = int(artist1_input)
+            if 1 <= num1 <= len(top_artists):
+                artist1 = top_artists[num1 - 1]
+            else:
+                artist1 = artist1_input
+        except ValueError:
+            artist1 = artist1_input
+        
+        try:
+            num2 = int(artist2_input)
+            if 1 <= num2 <= len(top_artists):
+                artist2 = top_artists[num2 - 1]
+            else:
+                artist2 = artist2_input
+        except ValueError:
+            artist2 = artist2_input
+        
+        logger.info(f"Comparando '{artist1}' vs '{artist2}'...")
+        
+        from src.utils.helpers import compare_artists
+        comparison = compare_artists(self.data, artist1, artist2)
+        
+        if comparison is None:
+            print(f"\n{Fore.RED}❌ Uno o ambos artistas no fueron encontrados{Style.RESET_ALL}")
+            print(f"\n{Fore.YELLOW}💡 Verifica que escribiste correctamente los nombres{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}   (Mayúsculas y minúsculas no importan){Style.RESET_ALL}")
+        else:
+            self.clear_screen()
+            print()
+            print(f"{Fore.YELLOW}{'═'*70}{Style.RESET_ALL}")
+            print(f"{Back.BLUE}{Fore.WHITE}{'  🎤 COMPARACIÓN DE ARTISTAS  ':^70}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}{'═'*70}{Style.RESET_ALL}")
+            print()
+            print(f"{Fore.GREEN}{'  ' + artist1:^35}{Style.RESET_ALL} {Fore.YELLOW}VS{Style.RESET_ALL} {Fore.MAGENTA}{artist2:^35}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}{'═'*70}{Style.RESET_ALL}")
+            print()
+            
+            # Mostrar tabla formateada con colores
+            for idx, row in comparison.iterrows():
+                metric = row['Métrica']
+                val1 = str(row[artist1])
+                val2 = str(row[artist2])
+                
+                # Determinar ganador (si es numérico)
+                try:
+                    # Intentar comparar valores numéricos
+                    num1 = float(val1.replace(',', '').replace('%', ''))
+                    num2 = float(val2.replace(',', '').replace('%', ''))
+                    
+                    if num1 > num2:
+                        color1 = Fore.GREEN
+                        color2 = Fore.WHITE
+                        winner = " 🏆"
+                    elif num2 > num1:
+                        color1 = Fore.WHITE
+                        color2 = Fore.GREEN
+                        winner = " 🏆"
+                    else:
+                        color1 = Fore.WHITE
+                        color2 = Fore.WHITE
+                        winner = ""
+                except:
+                    color1 = Fore.WHITE
+                    color2 = Fore.WHITE
+                    winner = ""
+                
+                print(f"{Fore.CYAN}{metric:35}{Style.RESET_ALL}", end='')
+                print(f"{color1}{val1:>15}{Style.RESET_ALL}", end='')
+                print(f"  {Fore.YELLOW}│{Style.RESET_ALL}  ", end='')
+                print(f"{color2}{val2:<15}{winner}{Style.RESET_ALL}")
+            
+            print()
+            print(f"{Fore.YELLOW}{'═'*70}{Style.RESET_ALL}")
+            print()
+            print(f"{Fore.GREEN}🏆 = Ganador en esa métrica{Style.RESET_ALL}")
+            print()
         
         input(f"\n{Fore.CYAN}📌 Presiona Enter para volver al menú...{Style.RESET_ALL}")
     

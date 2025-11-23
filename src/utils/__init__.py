@@ -10,7 +10,8 @@ from .helpers import (
     filter_outliers,
     create_category_bins,
     safe_divide,
-    search_songs
+    search_songs,
+    compare_artists
 )
 from .text_utils import truncate_text, wrap_text, clean_label
 
@@ -25,5 +26,6 @@ __all__ = [
     'truncate_text',
     'wrap_text',
     'clean_label',
-    'search_songs'
+    'search_songs',
+    'compare_artists'
 ]

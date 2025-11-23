@@ -159,3 +159,69 @@ def search_songs(data, query):
     results = results.drop_duplicates(subset=['track_name', 'artist_name'])
     
     return results
+
+
+def compare_artists(data, artist1, artist2):
+    """
+    Compara dos artistas en múltiples métricas
+    
+    Args:
+        data: DataFrame con datos de Spotify
+        artist1: Nombre del primer artista
+        artist2: Nombre del segundo artista
+    
+    Returns:
+        DataFrame con comparación o None si no se encuentran
+    
+    Ejemplo:
+        >>> comparison = compare_artists(data, "Drake", "The Weeknd")
+        >>> print(comparison)
+    """
+    import pandas as pd
+    
+    # Buscar artistas (case insensitive)
+    data1 = data[data['artist_name'].str.lower() == artist1.lower()]
+    data2 = data[data['artist_name'].str.lower() == artist2.lower()]
+    
+    # Verificar si existen
+    if len(data1) == 0 or len(data2) == 0:
+        return None
+    
+    # Calcular métricas
+    comparison = pd.DataFrame({
+        'Métrica': [
+            '🎵 Total de canciones',
+            '⭐ Popularidad promedio',
+            '🏆 Popularidad máxima',
+            '👥 Seguidores',
+            '⏱️  Duración promedio (min)',
+            '💿 Álbumes únicos',
+            '🔞 Canciones explícitas',
+            '📊 % Contenido explícito',
+            '🎼 Géneros principales'
+        ],
+        artist1: [
+            len(data1),
+            f"{data1['track_popularity'].mean():.1f}",
+            f"{data1['track_popularity'].max():.0f}",
+            f"{data1['artist_followers'].iloc[0]:,}",
+            f"{data1['track_duration_min'].mean():.2f}",
+            data1['album_name'].nunique(),
+            data1['explicit'].sum(),
+            f"{(data1['explicit'].sum() / len(data1) * 100):.1f}%",
+            data1['artist_genres'].iloc[0][:50] if 'artist_genres' in data1.columns else 'N/A'
+        ],
+        artist2: [
+            len(data2),
+            f"{data2['track_popularity'].mean():.1f}",
+            f"{data2['track_popularity'].max():.0f}",
+            f"{data2['artist_followers'].iloc[0]:,}",
+            f"{data2['track_duration_min'].mean():.2f}",
+            data2['album_name'].nunique(),
+            data2['explicit'].sum(),
+            f"{(data2['explicit'].sum() / len(data2) * 100):.1f}%",
+            data2['artist_genres'].iloc[0][:50] if 'artist_genres' in data2.columns else 'N/A'
+        ]
+    })
+    
+    return comparison
