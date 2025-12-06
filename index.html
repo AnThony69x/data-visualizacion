@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Data Visualizer - ULEAM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .badges {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: #2c3e50;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            margin: 0;
+        }
+
+        nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background: #1DB954;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 60px 40px;
+        }
+
+        section:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            border-bottom: 4px solid #1DB954;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* GRID DE GRÁFICOS */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .graph-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .graph-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .graph-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 3px solid #1DB954;
+        }
+
+        .graph-info {
+            padding: 20px;
+        }
+
+        .graph-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .graph-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .graph-number {
+            background: #1DB954;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .graph-card {
+            position: relative;
+        }
+
+        /* FEATURES */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature:hover {
+            transform: scale(1.05);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        /* TEAM */
+        .team {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .member {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-width: 200px;
+        }
+
+        .member-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .member h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .member p {
+            color: #1DB954;
+            font-weight: bold;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        footer a {
+            color: #1DB954;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+        }
+
+        /* MODAL para ver imagen grande */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1><i class="fas fa-music"></i> Spotify Data Visualizer</h1>
+            <p>Sistema de Visualización de Datos con Seaborn y Matplotlib</p>
+            <div class="badges">
+                <span class="badge"><i class="fas fa-graduation-cap"></i> ULEAM</span>
+                <span class="badge"><i class="fas fa-chart-bar"></i> 10 Gráficos</span>
+                <span class="badge"><i class="fab fa-python"></i> Python</span>
+                <span class="badge"><i class="fas fa-chart-line"></i> Seaborn</span>
+                <span class="badge"><i class="fas fa-calendar"></i> 2025</span>
+            </div>
+        </header>
+
+        <!-- NAVIGATION -->
+        <nav>
+            <ul>
+                <li><a href="#inicio"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#graficos"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
+                <li><a href="#caracteristicas"><i class="fas fa-star"></i> Características</a></li>
+                <li><a href="#equipo"><i class="fas fa-users"></i> Equipo</a></li>
+                <li><a href="#descargar"><i class="fas fa-download"></i> Descargar</a></li>
+            </ul>
+        </nav>
+
+        <!-- INICIO -->
+        <section id="inicio">
+            <h2><i class="fas fa-book"></i> Sobre el Proyecto</h2>
+            <p style="font-size: 1.1em; line-height: 1.8; color: #555; margin-top: 20px;">
+                Este proyecto implementa un <strong>sistema completo de visualización de datos</strong> 
+                utilizando un dataset de Spotify. Incluye <strong>10 tipos diferentes de gráficos</strong> 
+                con personalización avanzada, análisis estadístico y exportación en alta resolución.
+            </p>
+            <p style="font-size: 1.1em; line-height: 1.8; color: #555; margin-top: 15px;">
+                Desarrollado como proyecto final de la materia <strong>Visualización de Datos</strong> 
+                en la Universidad ULEAM, demuestra el uso profesional de librerías como 
+                <strong>Seaborn, Matplotlib, Pandas y Plotly</strong>.
+            </p>
+        </section>
+
+        <!-- GRÁFICOS -->
+        <section id="graficos">
+            <h2><i class="fas fa-chart-bar"></i> Galería de Visualizaciones</h2>
+            
+            <div class="gallery">
+                <!-- Gráfico 1 -->
+                <div class="graph-card" onclick="openModal('output/images/01_personalizacion_avanzada.png')">
+                    <div class="graph-number">1</div>
+                    <img src="output/images/01_personalizacion_avanzada.png" alt="Personalización Avanzada">
+                    <div class="graph-info">
+                        <h3>Personalización Avanzada</h3>
+                        <p>Gráfico de barras con control total de ejes, colores y etiquetas. Muestra los top 15 artistas más populares.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 2 -->
+                <div class="graph-card" onclick="openModal('output/images/02_mapa_calor.png')">
+                    <div class="graph-number">2</div>
+                    <img src="output/images/02_mapa_calor.png" alt="Mapa de Calor">
+                    <div class="graph-info">
+                        <h3>Mapa de Calor</h3>
+                        <p>Matriz de correlación entre variables numéricas para identificar relaciones estadísticas.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 3 -->
+                <div class="graph-card" onclick="openModal('output/images/03_histogramas.png')">
+                    <div class="graph-number">3</div>
+                    <img src="output/images/03_histogramas.png" alt="Histogramas">
+                    <div class="graph-info">
+                        <h3>Histogramas y Densidad</h3>
+                        <p>Distribución de frecuencias con curvas de densidad KDE superpuestas.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 4 -->
+                <div class="graph-card" onclick="openModal('output/images/04_boxplots.png')">
+                    <div class="graph-number">4</div>
+                    <img src="output/images/04_boxplots.png" alt="Boxplots">
+                    <div class="graph-info">
+                        <h3>Diagramas de Caja y Bigotes</h3>
+                        <p>Análisis de dispersión y detección de valores atípicos (outliers).</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 5 -->
+                <div class="graph-card" onclick="openModal('output/images/05_kde_densidad.png')">
+                    <div class="graph-number">5</div>
+                    <img src="output/images/05_kde_densidad.png" alt="KDE">
+                    <div class="graph-info">
+                        <h3>Gráficos de Densidad KDE</h3>
+                        <p>Estimación kernel de densidad univariada y mapas de densidad 2D.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 6 -->
+                <div class="graph-card" onclick="openModal('output/images/06_pareto.png')">
+                    <div class="graph-number">6</div>
+                    <img src="output/images/06_pareto.png" alt="Pareto">
+                    <div class="graph-info">
+                        <h3>Gráfico de Pareto</h3>
+                        <p>Aplicación del principio 80/20 para identificar factores clave.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 7 -->
+                <div class="graph-card" onclick="openModal('output/images/07_radar.png')">
+                    <div class="graph-number">7</div>
+                    <img src="output/images/07_radar.png" alt="Radar">
+                    <div class="graph-info">
+                        <h3>Gráfico de Radar</h3>
+                        <p>Comparación multidimensional de múltiples métricas simultáneamente.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 8 -->
+                <div class="graph-card" onclick="openModal('output/images/08_cascada.png')">
+                    <div class="graph-number">8</div>
+                    <img src="output/images/08_cascada.png" alt="Cascada">
+                    <div class="graph-info">
+                        <h3>Gráfico de Cascada (Waterfall)</h3>
+                        <p>Visualización de cambios acumulativos a lo largo del tiempo.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 9 -->
+                <div class="graph-card" onclick="openModal('output/images/09_enjambre.png')">
+                    <div class="graph-number">9</div>
+                    <img src="output/images/09_enjambre.png" alt="Enjambre">
+                    <div class="graph-info">
+                        <h3>Gráfico de Enjambre (Swarmplot)</h3>
+                        <p>Muestra todos los puntos de datos sin superposición.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico 10 -->
+                <div class="graph-card" onclick="window.open('output/interactive/10_sankey.html', '_blank')">
+                    <div class="graph-number">10</div>
+                    <img src="output/images/10_sankey.png" alt="Sankey">
+                    <div class="graph-info">
+                        <h3>Diagrama de Sankey (Interactivo)</h3>
+                        <p>Visualización de flujos entre categorías. ¡Click para ver versión interactiva!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CARACTERÍSTICAS -->
+        <section id="caracteristicas">
+            <h2><i class="fas fa-star"></i> Características del Sistema</h2>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon"><i class="fas fa-palette"></i></div>
+                    <h3>Personalización Avanzada</h3>
+                    <p>Control total de colores, ejes, etiquetas y estilos visuales.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon"><i class="fas fa-desktop"></i></div>
+                    <h3>Menú Interactivo</h3>
+                    <p>Interfaz de consola con colores y navegación intuitiva.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon"><i class="fas fa-search"></i></div>
+                    <h3>Búsqueda de Canciones</h3>
+                    <p>Sistema de búsqueda integrado con resultados ordenados.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon"><i class="fas fa-microphone"></i></div>
+                    <h3>Comparador de Artistas</h3>
+                    <p>Análisis comparativo de múltiples métricas entre artistas.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon"><i class="fas fa-camera"></i></div>
+                    <h3>Alta Resolución</h3>
+                    <p>Exportación de gráficos en 300 DPI para uso profesional.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon"><i class="fas fa-chart-area"></i></div>
+                    <h3>HTML Interactivo</h3>
+                    <p>Gráficos Sankey interactivos con Plotly.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon"><i class="fas fa-broom"></i></div>
+                    <h3>Limpieza Automática</h3>
+                    <p>Procesamiento y limpieza de datos integrado.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon"><i class="fas fa-file-alt"></i></div>
+                    <h3>Sistema de Logging</h3>
+                    <p>Registro detallado de operaciones con timestamps.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- EQUIPO -->
+        <section id="equipo">
+            <h2><i class="fas fa-users"></i> Equipo de Desarrollo</h2>
+            
+            <div class="team">
+                <div class="member">
+                    <div class="member-icon"><i class="fas fa-user-tie"></i></div>
+                    <h3>Anthony Mejia</h3>
+                    <p>@AnThony69x</p>
+                </div>
+
+                <div class="member">
+                    <div class="member-icon"><i class="fas fa-user-tie"></i></div>
+                    <h3>Emilio Cardenas</h3>
+                    <p>@EmilioSle</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <p style="font-size: 1.1em; color: #555;">
+                    <strong>Universidad:</strong> ULEAM<br>
+                    <strong>Materia:</strong> Visualización de Datos<br>
+                    <strong>Año:</strong> 2025<br>
+                </p>
+            </div>
+        </section>
+
+        <!-- DESCARGAR -->
+        <section id="descargar">
+            <h2><i class="fas fa-download"></i> Descargar y Ejecutar</h2>
+            
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 30px;">
+                <h3 style="color: #2c3e50; margin-bottom: 20px;"><i class="fas fa-rocket"></i> Instrucciones de Instalación</h3>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                    <h4><i class="fas fa-code-branch"></i> 1. Clonar el repositorio</h4>
+                    <code style="background: #2c3e50; color: #1DB954; padding: 10px; display: block; border-radius: 5px; margin-top: 10px;">
+                        git clone https://github.com/AnThony69x/data-visualizacion.git
+                    </code>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                    <h4><i class="fas fa-download"></i> 2. Instalar dependencias</h4>
+                    <code style="background: #2c3e50; color: #1DB954; padding: 10px; display: block; border-radius: 5px; margin-top: 10px;">
+                        pip install -r requirements.txt
+                    </code>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                    <h4><i class="fas fa-play"></i> 3. Ejecutar el programa</h4>
+                    <code style="background: #2c3e50; color: #1DB954; padding: 10px; display: block; border-radius: 5px; margin-top: 10px;">
+                        python main.py
+                    </code>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://github.com/AnThony69x/data-visualizacion" 
+                       target="_blank"
+                       style="display: inline-block; background: #1DB954; color: white; padding: 15px 40px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 1.1em;">
+                        <i class="fab fa-github"></i> Ver en GitHub
+                    </a>
+                </div>
+            </div>
+
+            <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 30px; border-left: 5px solid #ffc107;">
+                <h4 style="color: #856404;"><i class="fas fa-cog"></i> Requisitos del Sistema</h4>
+                <ul style="margin-top: 15px; color: #856404; line-height: 2;">
+                    <li><i class="fab fa-python"></i> Python 3.8 o superior</li>
+                    <li><i class="fas fa-box"></i> pip (gestor de paquetes)</li>
+                    <li><i class="fas fa-hdd"></i> 500 MB de espacio libre</li>
+                    <li><i class="fas fa-desktop"></i> Windows, macOS o Linux</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <p style="font-size: 1.2em; margin-bottom: 15px;">
+                <strong>Spotify Data Visualizer</strong>
+            </p>
+            <p>
+                Desarrollado con <i class="fas fa-heart" style="color: #e74c3c;"></i> por Anthony Mejia & Emilio Cardenas<br>
+                Universidad ULEAM - 2025
+            </p>
+            <p style="margin-top: 20px;">
+                <a href="https://github.com/AnThony69x/data-visualizacion" target="_blank">GitHub</a> | 
+                <a href="mailto:anthony@example.com">Contacto</a> | 
+                <a href="README.md">Documentación</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- MODAL PARA VER IMÁGENES -->
+    <div id="myModal" class="modal" onclick="closeModal()">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <script>
+        // Modal para ver imágenes en grande
+        function openModal(imgSrc) {
+            const modal = document.getElementById('myModal');
+            const modalImg = document.getElementById('modalImg');
+            modal.style.display = 'flex';
+            modalImg.src = imgSrc;
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        // Smooth scroll para navegación
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
